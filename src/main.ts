@@ -16,12 +16,16 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('PrismX Points API')
+    .setTitle('Sheron: Points API')
     .setDescription(
       'A secure and lightweight API for managing user points, balance tracking, and point-earning history for the PrismX assignment.',
     )
     .setVersion('1.0.0')
-    .setContact('PrismX Support', 'https://prismx.com', 'support@prismx.com')
+    .setContact(
+      'Sheron',
+      'https://prismx.com',
+      'sharif.dilmuratovich@gmail.com',
+    )
     .addServer('http://localhost:3000', 'Local Development')
     .addServer('https://api.prismx.com', 'Production')
     .addBearerAuth({
