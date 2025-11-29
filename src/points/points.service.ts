@@ -1,47 +1,34 @@
 import { Injectable } from '@nestjs/common';
-
-type HistoryItem = {
-  id: string;
-  amount: number; // positive earn, negative spend
-  note?: string;
-  ts: string;
-};
+import { EarnDto } from './dto/earn.dto';
 
 @Injectable()
 export class PointsService {
-  // structure: userId -> { balance, history[] }
-  private store = new Map<
-    string,
-    { balance: number; history: HistoryItem[] }
-  >();
+  private balance = 0;
+  private history: any[] = [];
 
-  private ensureUser(userId: string) {
-    if (!this.store.has(userId)) {
-      this.store.set(userId, { balance: 0, history: [] });
-    }
-  }
+  earnPoints(dto: EarnDto) {
+    this.balance += dto.amount;
 
-  earn(userId: string, amount: number, note?: string) {
-    this.ensureUser(userId);
-    const entry = this.store.get(userId)!;
-    entry.balance += amount;
-    const item: HistoryItem = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-      amount,
-      note,
-      ts: new Date().toISOString(),
+    this.history.push({
+      type: 'earn',
+      amount: dto.amount,
+      note: dto.note ?? null,
+      date: new Date(),
+    });
+
+    return {
+      message: 'Points earned successfully',
+      newBalance: this.balance,
     };
-    entry.history.unshift(item);
-    return { balance: entry.balance, item };
   }
 
-  getBalance(userId: string) {
-    this.ensureUser(userId);
-    return this.store.get(userId)!.balance;
+  getBalance() {
+    return {
+      balance: this.balance,
+    };
   }
 
-  getHistory(userId: string, limit = 50) {
-    this.ensureUser(userId);
-    return this.store.get(userId)!.history.slice(0, limit);
+  getHistory() {
+    return this.history;
   }
 }
